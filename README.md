@@ -14,6 +14,11 @@ In addition you will need vagrant-aws and vagrant-env plugins:
 * https://github.com/mitchellh/vagrant-aws
 * https://github.com/gosuri/vagrant-env
 
+The plugins can be installed easily:
+
+    $ vagrant plugin install vagrant-aws
+    $ vagrant plugin install vagrant-env
+
 # Deploying to EC2
 
 To use the EC2 wrapper do
