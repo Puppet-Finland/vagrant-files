@@ -5,8 +5,14 @@ A set of vagrant files for server deployments.
 # Requirements
 
 You will need a recent version of Vagrant. I suggest downloading the most recent 
-official packages from Vagrant homepage. In addition you will need vagrant-aws 
-and vagrant-env plugins.
+official packages from Vagrant homepage:
+
+* https://www.vagrantup.com/downloads.html
+
+In addition you will need vagrant-aws and vagrant-env plugins:
+
+* https://github.com/mitchellh/vagrant-aws
+* https://github.com/gosuri/vagrant-env
 
 # Deploying to EC2
 
