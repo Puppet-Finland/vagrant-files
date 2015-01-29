@@ -30,3 +30,6 @@ fi
 
 # Run Puppet
 puppet agent --test --waitforcert 60
+
+# Install security updates
+apt-get update && apt-get dist-upgrade -y
