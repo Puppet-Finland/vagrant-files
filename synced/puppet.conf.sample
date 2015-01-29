@@ -1,0 +1,7 @@
+[main]
+ssldir=/var/lib/puppet/ssl
+
+[agent]
+environment=production
+server=puppet
+pluginsync=true

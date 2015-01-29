@@ -23,18 +23,19 @@ The plugins can be installed easily:
 
 To use the EC2 wrapper do
 
-    $ cd ec2
+    $ cd vagrant-files/ec2
     $ cp env.sample .env
+    $ nano .env
 
-Then fill in the blanks in the .env file. Then just run
+Customize .env to your liking and then setup puppet.conf:
 
-    $ FQDN=something LSBDISTCODENAME=something vagrant up 
+    $ cd ../synced
+    $ cp puppet.conf.sample puppet.conf
+    $ nano puppet.conf
 
-where FQDN is the fully-qualified domain name for the new node used primarily to 
-make sure that "facter fqdn" resolves to a reasonable value. The LSBDISTCODENAME 
-is used to locate correct Puppetlabs apt repo package. Example usage:
+Edit the puppet.conf to your liking and then just run
 
-    $ FQDN=server.domain.com LSBDISTCODENAME=trusty vagrant up
+    $ FQDN=server.domain.com vagrant up
 
-Make sure that the LSBDISTCODENAME matches the operating system of the host 
-being created.
+where FQDN is the fully-qualified domain name for the new node. The FQDN is 
+primarily used to make sure that "facter fqdn" resolves to a reasonable value.
