@@ -39,3 +39,8 @@ Edit the puppet.conf to your liking and then just run
 
 where FQDN is the fully-qualified domain name for the new node. The FQDN is 
 primarily used to make sure that "facter fqdn" resolves to a reasonable value.
+
+Environment variables given in .env can be overridden on the command-line. For 
+example:
+
+    $ FQDN=server.domain.com AMI=ami-628cbc7f VOLUMESIZE=40 vagrant up
