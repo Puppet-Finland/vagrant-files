@@ -33,10 +33,12 @@ To configure the EC2 wrapper do
     $ cp env.sample .env
     $ nano .env
 
-Customize .env to your liking.
+Customize .env to your liking. You can also maintain several different env files 
+for different purposes and make .env a symbolic link to the desired one. You may 
+need to "rm -rf ec2/.vagrant" after switching environments, though. 
 
-The bootstrapping scripts are located under "bootstrap" directory. Here's one 
-example:
+It is encouraged to place the bootstrapping script(s) under "bootstrap" 
+directory. Here's one example:
 
     bootstrap/
     ├── common
@@ -50,12 +52,11 @@ example:
         ├── init.ps1
         └── openvpn.cer
 
-Vagrant syncs the contents of "bootstrap/common" to the remote host. The 
-"bootstrap/linux/init.sh" (shell) or "bootstrap/windows/init.ps1" (PowerShell) 
-scripts will get added to EC2 user data and are run when the instance launches. 
-The OSFAMILY environment variable will determine which script to run.
+The value of EC2_USER_DATA environment variable will determine the script to run 
+on the host. Variables SYNC_LOCAL and SYNC_REMOTE determine which local and 
+remote directories are used for synced folders.
 
-Once you're done setting up your deployment scripts run
+Once you're done setting up your deployment scripts and .env file, run
 
     $ FQDN=server.domain.com vagrant up
 
@@ -68,4 +69,7 @@ used for two things:
 Environment variables given in .env can be overridden on the command-line. For 
 example:
 
-    $ FQDN=server.domain.com AMI=ami-628cbc7f VOLUMESIZE=40 OSFAMILY=Windows vagrant up
+    $ FQDN=server.domain.com AMI=ami-628cbc7f VOLUMESIZE=40 vagrant up
+
+With *NIX provisioning things should just magically work. With Windows be 
+prepared to endure tons of pain and sorrow.
