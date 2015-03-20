@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
   config.env.enable
   config.vm.box = "aws"
   config.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
-  config.vm.synced_folder "../bootstrap/common", "/vagrant"
+  config.vm.synced_folder ENV['SYNC_LOCAL'], ENV['SYNC_REMOTE']
 
   config.vm.provider :aws do |aws, override|
 
@@ -18,10 +18,7 @@ Vagrant.configure("2") do |config|
     aws.subnet_id = ENV['SUBNET_ID']
     aws.associate_public_ip = ENV['ASSOCIATE_PUBLIC_IP']
 
-    aws.user_data = case ENV['OSFAMILY']
-        when "windows" then File.read("../bootstrap/windows/init.ps1")
-        when "linux" then File.read("../bootstrap/linux/init.sh")
-    end
+    aws.user_data = File.read(ENV['USER_DATA_FILE'])
 
     aws.block_device_mapping = [{ 'DeviceName' => '/dev/sda1', 'Ebs.VolumeSize' => ENV['VOLUMESIZE'] }]
     aws.tags = {
@@ -30,6 +27,7 @@ Vagrant.configure("2") do |config|
     }
 
     override.ssh.username = ENV['SSH_USERNAME']
+    override.ssh.password = ENV['SSH_PASSWORD']
     override.ssh.private_key_path = ENV['SSH_PRIVATE_KEY_PATH']
   end
 end
