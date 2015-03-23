@@ -3,7 +3,8 @@ Vagrant.configure("2") do |config|
   config.env.enable
   config.vm.box = "aws"
   config.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
-  config.vm.synced_folder ENV['SYNC_LOCAL'], ENV['SYNC_REMOTE']
+
+  config.vm.synced_folder "#{ENV['SYNC_LOCAL']}", "#{ENV['SYNC_REMOTE']}", create: true, disabled: ENV['SYNC_DISABLED'] 
 
   config.vm.provider :aws do |aws, override|
 
@@ -14,7 +15,7 @@ Vagrant.configure("2") do |config|
     aws.ami = ENV['AMI']
     aws.region = ENV['REGION']
     aws.instance_type = ENV['INSTANCE_TYPE']
-    aws.security_groups = ENV['SECURITY_GROUPS']
+    aws.security_groups = ENV['SECURITY_GROUPS'].split(",")
     aws.subnet_id = ENV['SUBNET_ID']
     aws.associate_public_ip = ENV['ASSOCIATE_PUBLIC_IP']
 
