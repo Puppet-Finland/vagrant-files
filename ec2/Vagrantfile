@@ -1,13 +1,15 @@
 Vagrant.configure("2") do |config|
 
-  # Generic settings
   config.env.enable
   config.vm.hostname = ENV['FQDN']
-  config.vm.synced_folder "#{ENV['SYNC_LOCAL']}", "#{ENV['SYNC_REMOTE']}", create: true, disabled: ENV['SYNC_DISABLED'] 
+  config.vm.synced_folder "#{ENV['SYNC_LOCAL']}", "#{ENV['SYNC_REMOTE']}", type: "rsync"
 
-  # AWS provider
+  begin
+    config.vm.provision :shell, :path => "#{ENV['BOOTSTRAP_SCRIPT']}", :args => "#{ENV['LSBDISTCODENAME']} #{ENV['FQDN']}"
+  rescue
+  end
+
   config.vm.provider :aws do |aws, override|
-
     aws.access_key_id = ENV['ACCESS_KEY_ID']
     aws.secret_access_key = ENV['SECRET_ACCESS_KEY']
     aws.keypair_name = ENV['KEYPAIR_NAME']
@@ -19,7 +21,12 @@ Vagrant.configure("2") do |config|
     aws.subnet_id = ENV['SUBNET_ID']
     aws.associate_public_ip = ENV['ASSOCIATE_PUBLIC_IP']
 
-    aws.user_data = File.read(ENV['USER_DATA_FILE'])
+    # If the bootstrap script can't be copied over due to rsync issues, try to 
+    # pass it as EC2 user data.
+    begin
+      aws.user_data = File.read(ENV['USER_DATA_FILE'])
+    rescue
+    end
 
     aws.block_device_mapping = [{ 'DeviceName' => '/dev/sda1', 'Ebs.VolumeSize' => ENV['VOLUMESIZE'] }]
     aws.tags = {
@@ -34,22 +41,4 @@ Vagrant.configure("2") do |config|
     override.vm.box = "aws"
     override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
   end
-
-  # Libvirt provider
-  config.vm.provider :libvirt do |libvirt, override|
-
-    libvirt.host = ENV['HOST']
-    libvirt.connect_via_ssh = ENV['CONNECT_VIA_SSH']
-    libvirt.username = ENV['USERNAME']
-    libvirt.password = ENV['PASSWORD']
-    libvirt.id_ssh_key_file = ENV['ID_SSH_KEY_FILE']
-    memory = ENV['MEMORY']
-    cpus = ENV['CPUS']
-    graphics_type = ENV['GRAPHICS_TYPE']
-    graphics_ip = ENV['GRAPHICS_IP']
-
-    override.vm.box = ENV['BOX']
-    override.vm.box_url = ENV['BOX_URL']
-  end
-
 end

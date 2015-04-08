@@ -1,0 +1,26 @@
+Vagrant.configure("2") do |config|
+
+  config.env.enable
+  config.vm.hostname = ENV['FQDN']
+  config.vm.synced_folder "#{ENV['SYNC_LOCAL']}", "#{ENV['SYNC_REMOTE']}", type: 'rsync'
+
+  begin
+    config.vm.provision :shell, :path => "#{ENV['BOOTSTRAP_SCRIPT']}", :args => "#{ENV['LSBDISTCODENAME']} #{ENV['FQDN']}"
+  rescue
+  end
+
+  config.vm.provider :libvirt do |libvirt, override|
+    libvirt.host = ENV['HOST']
+    libvirt.connect_via_ssh = ENV['CONNECT_VIA_SSH']
+    libvirt.username = ENV['USERNAME']
+    libvirt.password = ENV['PASSWORD']
+    libvirt.id_ssh_key_file = ENV['ID_SSH_KEY_FILE']
+    memory = ENV['MEMORY']
+    cpus = ENV['CPUS']
+    graphics_type = ENV['GRAPHICS_TYPE']
+    graphics_ip = ENV['GRAPHICS_IP']
+
+    override.vm.box = ENV['BOX']
+    override.vm.box_url = ENV['BOX_URL']
+  end
+end
