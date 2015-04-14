@@ -25,24 +25,24 @@ They are included as a Git submodule.
 
 # Configuring vagrant-files
 
-To configure Vagrant do
+To configure Vagrant edit .env in a provider-specific directory, e.g.
 
-    $ cd vagrant-files/vagrant
+    $ cd vagrant-files/ec2
     $ cp env.sample .env
     $ nano .env
 
-Customize .env to your liking - many of the parameters are provider-specific, so 
-you don't need to fill in everything. All parameters can be overridden on the 
-command-line. For example if you're using the EC2 provider you could do
+Customize .env to match your environment. All of the parameters can be 
+overridden on the command-line. For example if you're using the EC2 provider you 
+could do
 
     $ FQDN=server.domain.com AMI=ami-628cbc7f VOLUMESIZE=40 vagrant up
 
-This would create an instance with differing volume size from a differing AMI 
-image than what is configured in vagrant/.env.
+This would create an instance with a volume size and AMI image that differ from
+what is configured in ec2/.env.
 
 You can also maintain several different env files for different purposes and 
 make .env a symbolic link to the desired one. You may need to "rm -rf 
-vagrant/.vagrant" after switching environments, though.
+ec2/.vagrant" after switching environments, though.
 
 # EC2 notes
 
@@ -67,17 +67,29 @@ It can be installed easily using
 
     $ vagrant plugin install vagrant-libvirt
 
+Note that vagrant-libvirt does not currently support attaching the generated VM 
+to an existing bridge interface. This makes it a bit less useful for production 
+server deployments, but does not negatively affect the VirtualBox-style 
+desktop/laptop test provisioning.
+
 # Deploying
 
-Once you're done setting up your deployment scripts and .env file, run
+Once you're done setting up your deployment scripts and .env file, go to the 
+provider-specific directory (e.g. "ec2" or "libvirt") and run
 
-    $ FQDN=server.domain.com vagrant up --provider <provider>
+    $ FQDN=server.domain.com vagrant up
 
-Where provider is "aws" (ec2) or "libvirt". FQDN is the fully-qualified domain 
-name for the new node and it is used for two things:
+FQDN is the fully-qualified domain name for the new node and it is generally 
+used for two things:
 
 * To give a name for the VM instance
 * To make sure that "facter fqdn" resolves to a reasonable value
 
-With *NIX provisioning things should just magically work. With Windows be 
-prepared to endure tons of pain and sorrow.
+Some of the puppet-specific example bootstrapping scripts also parse the 
+LSBDISTCODENAME parameter, which is only used to determine which Puppet packages 
+to install from Puppetlabs software repositories:
+
+    $ FQDN=server.domain.com LSBDISTCODENAME=wheezy vagrant up
+
+With *NIX provisioning and bootstrapping should just magically work. With 
+Windows be prepared to endure tons of pain and sorrow.
